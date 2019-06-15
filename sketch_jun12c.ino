@@ -1,21 +1,31 @@
-#define PIN_NUM 2//人体，高=有人
-#define PIN_D 2//光敏，高于（亮）设定值，低电平；低于（暗）设定值，高电平
+const int TrigPin = 2; 
+const int EchoPin = 3; 
+int LedPin = 12;
+float cm; 
+void setup() 
+{ 
+Serial.begin(9600); 
+pinMode(TrigPin, OUTPUT); 
+pinMode(EchoPin, INPUT); 
+pinMode(8,OUTPUT);
+pinMode(LedPin,OUTPUT);
+} 
+void loop() 
+{ 
+digitalWrite(8, LOW);
 
-void setup()  {
-  Serial.begin(9600);
-  pinMode(PIN_NUM,INPUT);
+digitalWrite(TrigPin, LOW); //低高低电平发一个短时间脉冲去TrigPin 
+delayMicroseconds(2); 
+digitalWrite(TrigPin, HIGH); 
+delayMicroseconds(10); 
+digitalWrite(TrigPin, LOW); 
+
+cm = pulseIn(EchoPin, HIGH) / 58.0; //将回波时间换算成cm 
+cm = (int(cm * 100.0)) / 100.0; //保留两位小数 
+if (cm>=2 && cm<=10)
+{digitalWrite(8, HIGH);
+digitalWrite(LedPin,HIGH);}//在距离范围内亮灯
+else{
+  digitalWrite(LedPin,LOW);
 }
-
-void loop()  {
-
-int val;
-val=digitalRead(PIN_D);
-
-  if(digitalRead(PIN_NUM)==HIGH&&val<=99){
-    Serial.println("Someone here!");//lights up
-  }   
-  else {
-    Serial.println("Nobody");//lights down
-  }
-  delay(1000);
 }
